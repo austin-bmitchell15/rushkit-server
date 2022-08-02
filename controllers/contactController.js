@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import ContactModel from "../models/contact.js";
+import ContactModel from "../models/contactModel.js";
 
 export const getContacts = async (req, res) => {
     try {
@@ -12,9 +12,9 @@ export const getContacts = async (req, res) => {
 }
 
 export const createContact = async (req, res) => {
-    const contact = req.body;
+    const post = req.body;
 
-    const newContactModel = new ContactModel(contact);
+    const newContactModel = new ContactModel({ ...post, creatorUserId: req.userId, createdAt: new Date().toISOString()});
 
     try {
         await newContactModel.save();
@@ -25,9 +25,9 @@ export const createContact = async (req, res) => {
 }
 
 export const updateContact = async (req, res) => {
-    const { id: _id } = req.params;
+    const { id } = req.params;
     const contact = req.body;
-    const parsedId = new mongoose.Types.ObjectId(_id);
+    const parsedId = new mongoose.Types.ObjectId(id);
 
     if (!mongoose.Types.ObjectId.isValid(parsedId)) return res.status(404).send('No contact with that id');
 

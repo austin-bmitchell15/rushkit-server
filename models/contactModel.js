@@ -10,7 +10,9 @@ const contactSchema = mongoose.Schema({
     createdAt: {
         type: Date,
         degault: new Date()
-    }
+    },
+    creatorUserId: String,
+    creatorName: String
 });
 
 const ContactModel = mongoose.model('Contact', contactSchema);
