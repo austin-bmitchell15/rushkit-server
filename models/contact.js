@@ -1,21 +1,18 @@
 import mongoose from 'mongoose';
 
-const postSchema = mongoose.Schema({
+const contactSchema = mongoose.Schema({
     email: String,
     message: String,
     name: String,
     phone: String,
     selectedFile: String,
-    likeCount: {
-        type: Number,
-        default: 0
-    },
+    isHot: Boolean,
     createdAt: {
         type: Date,
         degault: new Date()
     }
 });
 
-const PostMessage = mongoose.model('PostMessage', postSchema);
+const ContactModel = mongoose.model('Contact', contactSchema);
 
-export default PostMessage;
+export default ContactModel;
