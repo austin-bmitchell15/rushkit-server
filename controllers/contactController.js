@@ -2,10 +2,28 @@ import mongoose from "mongoose";
 import ContactModel from "../models/contactModel.js";
 
 export const getContacts = async (req, res) => {
+    const { page } = req.query;
     try {
-        const contactModel = await ContactModel.find();
+        const LIMIT = 8;
+        const startingContact = (Number(page) - 1) * LIMIT;
+        const totalContacts = await ContactModel.countDocuments({});
 
-        res.status(200).json(contactModel);
+        const contacts = await ContactModel.find().sort({ _id: -1 }).limit(LIMIT).skip(startingContact);
+
+        res.status(200).json({ contacts: contacts, currentPage: Number(page), numberOfPages: Math.ceil(totalContacts / LIMIT) });
+    } catch (error) {
+        res.status(404).json({ message: error.message })
+    }
+}
+
+export const getContactsBySearch = async (req, res) => {
+    const { searchQuery } = req.query
+    try {
+        const name = new RegExp(searchQuery, 'i');
+
+        const contacts = await ContactModel.find({name: name});
+
+        res.json({ contacts: contacts });
     } catch (error) {
         res.status(404).json({ message: error.message })
     }
