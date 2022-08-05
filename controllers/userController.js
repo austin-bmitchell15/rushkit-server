@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv'
 
 import UserModel from '../models/userModel.js';
 
@@ -15,6 +16,7 @@ export const signin = async (req, res) => {
 
         if(!isPasswordCorrect) return res.status(400).json({message: 'Invalid Credentials'});
 
+
         const token = jwt.sign({ email: existingUser.email, id: existingUser._id }, 'test', { expiresIn: '1h' })
 
         res.status(200).json({ result: existingUser, token })
@@ -25,7 +27,7 @@ export const signin = async (req, res) => {
 
 export const signup = async (req, res) => {
 
-    const {email, password, confirmPassword, firstName, lastName} = req.body;
+    const {email, password, confirmPassword, firstName, lastName, secretWord} = req.body;
 
     try {
         const existingUser = await UserModel.findOne({ email });
@@ -33,6 +35,8 @@ export const signup = async (req, res) => {
         if (existingUser) return res.status(400).json({message: 'User already exists'});
 
         if (password !== confirmPassword) return res.status(400).json({message: 'Passwords don\'t match'});
+
+        if (secretWord !== process.env.SECRET_WORD) return res.status(400).json({message: 'Invalid Credentials'});
 
         const hashedPassword = await bcrypt.hash(password, 12);
 

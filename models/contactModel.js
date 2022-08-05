@@ -1,15 +1,15 @@
 import mongoose from 'mongoose';
 
 const contactSchema = mongoose.Schema({
+    name: String,
     email: String,
     message: String,
-    name: String,
-    phone: String,
+    phoneNumber: String,
     selectedFile: String,
     isHot: Boolean,
     createdAt: {
         type: Date,
-        degault: new Date()
+        default: new Date()
     },
     creatorUserId: String,
     creatorName: String
