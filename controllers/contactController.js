@@ -14,7 +14,19 @@ export const getContacts = async (req, res) => {
     } catch (error) {
         res.status(404).json({ message: error.message })
     }
-}
+};
+
+export const getContact = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const parsedId = new mongoose.Types.ObjectId(id);
+        const contact = await ContactModel.findById(parsedId);
+
+        res.status(200).json(contact);
+    } catch (error) {
+        res.status(404).json({ message: error.message })
+    }
+};
 
 export const getContactsBySearch = async (req, res) => {
     const { searchQuery } = req.query
@@ -27,12 +39,12 @@ export const getContactsBySearch = async (req, res) => {
     } catch (error) {
         res.status(404).json({ message: error.message })
     }
-}
+};
 
 export const createContact = async (req, res) => {
-    const post = req.body;
+    const contact = req.body;
 
-    const newContactModel = new ContactModel({ ...post, creatorUserId: req.userId, createdAt: new Date().toISOString()});
+    const newContactModel = new ContactModel({ ...contact, creatorUserId: req.userId, createdAt: new Date().toISOString()});
 
     try {
         await newContactModel.save();
@@ -40,7 +52,7 @@ export const createContact = async (req, res) => {
     } catch (error) {
         res.status(409).json({ message: error.message })
     }
-}
+};
 
 export const updateContact = async (req, res) => {
     const { id } = req.params;
@@ -52,7 +64,7 @@ export const updateContact = async (req, res) => {
     const updatedContact = await ContactModel.findByIdAndUpdate((parsedId), {...contact, parsedId}, { new: true });
 
     res.json(updatedContact);
-}
+};
 
 export const deleteContact = async (req, res) => {
     const { id } = req.params;
@@ -64,7 +76,7 @@ export const deleteContact = async (req, res) => {
     await ContactModel.findByIdAndDelete(parsedId);
     
     res.json({message: 'Contact Deleted successfully'});
-}
+};
 
 export const hotContact = async (req, res) => {
     const { id } = req.params;
@@ -77,4 +89,4 @@ export const hotContact = async (req, res) => {
     const updatedContact = await ContactModel.findByIdAndUpdate(parsedId, { isHot: contact.isHot ? false : true }, { new: true});
 
     res.json(updatedContact);
-}
+};
