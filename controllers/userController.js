@@ -4,6 +4,8 @@ import dotenv from 'dotenv'
 
 import UserModel from '../models/userModel.js';
 
+dotenv.config();
+
 export const signin = async (req, res) => {
     const { email, password } = req.body;
 
@@ -17,7 +19,7 @@ export const signin = async (req, res) => {
         if(!isPasswordCorrect) return res.status(400).json({message: 'Invalid Credentials'});
 
 
-        const token = jwt.sign({ email: existingUser.email, id: existingUser._id }, 'test', { expiresIn: '1h' })
+        const token = jwt.sign({ email: existingUser.email, id: existingUser._id }, process.env.TOKEN_KEY, { expiresIn: '1h' })
 
         res.status(200).json({ result: existingUser, token })
     } catch (error) {
@@ -30,23 +32,35 @@ export const signup = async (req, res) => {
     const {email, password, confirmPassword, firstName, lastName, secretWord} = req.body;
 
     try {
+        var map = new Map();
+        map.set(process.env.ADMIN_SECRET_WORD, "admin");
+        map.set(process.env.USER_SECRET_WORD, "user");
+        map.set(process.env.DOORMAN_SECRET_WORD, "doorman");
+
+        console.log("hello")
+
+
         const existingUser = await UserModel.findOne({ email });
 
         if (existingUser) return res.status(400).json({message: 'User already exists'});
 
         if (password !== confirmPassword) return res.status(400).json({message: 'Passwords don\'t match'});
 
-        if (secretWord !== process.env.SECRET_WORD) return res.status(400).json({message: 'Invalid Credentials'});
+        if (!map.has(secretWord)) return res.status(400).json({message: 'Invalid Credentials'});
+        console.log("hello2")
 
         const hashedPassword = await bcrypt.hash(password, 12);
 
-        const result = await UserModel.create({email, password: hashedPassword, name: `${firstName} ${lastName}`});
+        const result = await UserModel.create({email, password: hashedPassword, name: `${firstName} ${lastName}`, role: map.get(secretWord)});
+        console.log(result);
 
-        const token = jwt.sign({email: result.email, id: result._id}, 'test', {expiresIn: '1h'})
+        const token = jwt.sign({email: result.email, id: result._id}, process.env.TOKEN_KEY, {expiresIn: '1h'})
+        console.log(token);
 
         res.status(200).json({ result, token })
     } catch (error) {
-        res.status(500).json({ message: 'Something went wrong' })
+        console.log(error);
+        res.status(500).json({ message: 'Something went wrong' });
     }
     
 }
