@@ -37,25 +37,19 @@ export const signup = async (req, res) => {
         map.set(process.env.USER_SECRET_WORD, "user");
         map.set(process.env.DOORMAN_SECRET_WORD, "doorman");
 
-        console.log("hello")
-
 
         const existingUser = await UserModel.findOne({ email });
 
-        if (existingUser) return res.status(400).json({message: 'User already exists'});
+        if (existingUser) return res.status(400).json({message: 'EMAIL_EXISTS'});
 
-        if (password !== confirmPassword) return res.status(400).json({message: 'Passwords don\'t match'});
+        if (password !== confirmPassword) return res.status(400).json({message: 'PASSWORD_DO_NOT_MATCH'});
 
-        if (!map.has(secretWord)) return res.status(400).json({message: 'Invalid Credentials'});
-        console.log("hello2")
+        if (!map.has(secretWord)) return res.status(400).json({message: 'INVALID_CREDENTIALS'});
 
         const hashedPassword = await bcrypt.hash(password, 12);
 
         const result = await UserModel.create({email, password: hashedPassword, name: `${firstName} ${lastName}`, role: map.get(secretWord)});
-        console.log(result);
-
-        const token = jwt.sign({email: result.email, id: result._id}, process.env.TOKEN_KEY, {expiresIn: '1h'})
-        console.log(token);
+        const token = jwt.sign({email: result.email, id: result._id}, process.env.TOKEN_KEY, {expiresIn: '1h'});
 
         res.status(200).json({ result, token })
     } catch (error) {
