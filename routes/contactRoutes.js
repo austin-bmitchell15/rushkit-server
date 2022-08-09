@@ -5,9 +5,9 @@ import auth from '../middleware/auth.js';
 
 const router = express.Router();
 
+router.get('/search', getContactsBySearch);
 router.get('/', getContacts);
 router.get('/:id', getContact);
-router.get('/search', getContactsBySearch)
 router.post('/', auth, createContact);
 router.patch('/:id', auth, updateContact);
 router.delete('/:id', auth, deleteContact);

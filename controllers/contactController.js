@@ -29,7 +29,8 @@ export const getContact = async (req, res) => {
 };
 
 export const getContactsBySearch = async (req, res) => {
-    const { searchQuery } = req.query
+    const { searchQuery } = req.query;
+    console.log(req.query);
     try {
         const name = new RegExp(searchQuery, 'i');
 
