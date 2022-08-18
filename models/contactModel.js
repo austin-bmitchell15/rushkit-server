@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const contactSchema = mongoose.Schema({
     name: String,
     email: String,
-    message: String,
+    year: String,
     phoneNumber: String,
     selectedFile: String,
     isHot: Boolean,
