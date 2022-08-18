@@ -7,6 +7,7 @@ import dotenv from 'dotenv'
 import contactRoutes from './routes/contactRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 
+console.log(process.env.CONNECTION_URL);
 const app = express();
 dotenv.config();
 
