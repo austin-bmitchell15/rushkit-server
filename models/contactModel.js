@@ -6,6 +6,9 @@ const contactSchema = mongoose.Schema({
     year: String,
     phoneNumber: String,
     interestTags: [String],
+    brothersTalkedTo: [String],
+    numberOfBrothersTalkedTo: Number,
+    brothersReccommended: [String],
     selectedFile: String,
     isHot: Boolean,
     createdAt: {
